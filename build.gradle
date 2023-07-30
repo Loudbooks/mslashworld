@@ -8,12 +8,13 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation 'dev.hollowcube:minestom-ce:65254e919d'
+    implementation 'com.github.MadMartian:hydrazine-path-finding:1.8.1'
 }
 
 test {
@@ -21,9 +22,5 @@ test {
 }
 
 kotlin {
-    jvmToolchain(20)
-}
-
-application {
-    mainClassName = 'MainKt'
+    jvmToolchain(19)
 }
