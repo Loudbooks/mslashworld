@@ -1,21 +1,17 @@
 package com.loudbook.dev
 
-import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import net.minestom.server.network.packet.server.play.ActionBarPacket
-import net.minestom.server.timer.Task
 import net.minestom.server.timer.TaskSchedule
 import java.util.*
-import java.util.concurrent.locks.ReadWriteLock
-import kotlin.time.Duration.Companion.seconds
 
+@Suppress("UnstableApiUsage")
 class TimerManager {
     private val timerMap = mutableMapOf<UUID, Int>()
 
@@ -57,10 +53,6 @@ class TimerManager {
     }
     fun getTimer(player: Player): Int? {
         return timerMap[player.uuid]
-    }
-
-    fun removeTimer(player: Player) {
-        timerMap.remove(player.uuid)
     }
 
     private fun secondsToTimerString(seconds: Int): String {
