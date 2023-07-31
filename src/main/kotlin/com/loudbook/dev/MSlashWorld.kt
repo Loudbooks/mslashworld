@@ -1,5 +1,6 @@
 package com.loudbook.dev
 
+import com.loudbook.dev.commands.PlaceCommand
 import com.loudbook.dev.listener.PlaceBlockHandler
 import com.loudbook.dev.listener.BlockPreviewHandler
 import com.loudbook.dev.listener.PaletteHandler
@@ -43,7 +44,7 @@ class MSlashWorld {
                 event.setSpawningInstance(worldInstance)
                 val skin = PlayerSkin.fromUuid(event.player.uuid.toString())
                 event.player.skin = skin
-                event.player.gameMode = GameMode.ADVENTURE
+                event.player.gameMode = GameMode.CREATIVE
                 event.player.respawnPoint = Pos(0.0, 1.0, 0.0)
                 event.player.isAllowFlying = true
                 event.player.isFlying = true
@@ -56,6 +57,8 @@ class MSlashWorld {
                 .addListener(BlockPreviewHandler(timerManager))
                 .addListener(PlaceBlockHandler(timerManager))
                 .addListener(PaletteHandler(timerManager))
+
+            MinecraftServer.getCommandManager().register(PlaceCommand(timerManager))
 
             if (args.isEmpty()) {
                 minecraftServer.start("0.0.0.0", 25565)

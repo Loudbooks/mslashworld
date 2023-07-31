@@ -2,7 +2,6 @@ package com.loudbook.dev.listener
 
 import com.loudbook.dev.TimerManager
 import net.minestom.server.event.EventListener
-import net.minestom.server.event.player.PlayerChangeHeldSlotEvent
 import net.minestom.server.event.player.PlayerHandAnimationEvent
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
@@ -42,7 +41,7 @@ class PaletteHandler(private val timerManager: TimerManager) : EventListener<Pla
             player.inventory.setItemStack(i, ItemStack.of(blocks[newIndex]))
         }
 
-        if (timerManager.getTimer(player) != null) return EventListener.Result.SUCCESS
+        if (timerManager.getPlaceTimer(player)) return EventListener.Result.SUCCESS
 
         BlockPreviewHandler.previewBlock(player, blocks[newIndex].block(), player.getLineOfSight(100).first())
 

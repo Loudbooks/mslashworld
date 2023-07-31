@@ -14,7 +14,7 @@ class PlaceBlockHandler(private val timerManager: TimerManager) : EventListener<
     override fun run(event: PlayerUseItemEvent): EventListener.Result {
         val player = event.player
 
-        if (timerManager.getTimer(player) != null) return EventListener.Result.SUCCESS
+        if (timerManager.getPlaceTimer(player)) return EventListener.Result.SUCCESS
 
         val blocksInSight = player.getLineOfSight(100)
         blocksInSight ?: return EventListener.Result.SUCCESS
@@ -25,7 +25,7 @@ class PlaceBlockHandler(private val timerManager: TimerManager) : EventListener<
         player.instance.setBlock(blockPosition, event.player.itemInMainHand.material().block())
         player.playSound(Sound.sound(Key.key("block.wool.place"), Sound.Source.PLAYER, 10f, 1f))
 
-        timerManager.startTimer(player, 10)
+        timerManager.startPlaceTimer(player, 10)
 
         return EventListener.Result.SUCCESS
     }
