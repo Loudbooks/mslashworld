@@ -15,13 +15,13 @@ import net.minestom.server.timer.TaskSchedule
 import java.util.*
 
 @Suppress("UnstableApiUsage")
-class TimerManager {
+class TimerManager(private val config: Config) {
     private val placeTimerMap = mutableMapOf<UUID, Int>()
     private val currentPrePlaceTimers = mutableListOf<UUID>()
 
-    fun startPlaceTimer(player: Player, seconds: Int) {
+    fun startPlaceTimer(player: Player) {
         val uuid = player.uuid
-        placeTimerMap[uuid] = seconds
+        placeTimerMap[uuid] = this.config.placeCooldown
 
         MinecraftServer.getSchedulerManager().submitTask {
             if (placeTimerMap[uuid]!! > 0) {
@@ -94,7 +94,7 @@ class TimerManager {
 
             if (timesRun == 20) {
                 player.instance.setBlock(point, material.block())
-                startPlaceTimer(player, 10)
+                startPlaceTimer(player)
                 currentPrePlaceTimers.remove(player.uuid)
                 return@submitTask TaskSchedule.stop()
             }

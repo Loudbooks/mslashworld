@@ -1,0 +1,4 @@
+port=25565
+admins=["valkyrie_pilot", "loudbook"]
+placeDistance=5
+placeCooldown=10
