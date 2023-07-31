@@ -71,6 +71,8 @@ class TimerManager(private val config: Config) {
     fun startPrePlaceTimer(player: Player, point: Point, material: Material) {
         currentPrePlaceTimers.add(player.uuid)
 
+        BlockPreviewHandler.resetAllPreviews(player)
+
         player.sendMessage(
             Component.textOfChildren(
                 Component.text("Your block will be placed in 5 seconds! Type ")
@@ -86,7 +88,7 @@ class TimerManager(private val config: Config) {
         var timesRun = 0
         MinecraftServer.getSchedulerManager().submitTask {
             if (!currentPrePlaceTimers.contains(player.uuid)) {
-                BlockPreviewHandler.resetBlock(player)
+                BlockPreviewHandler.resetPrePlaceBlock(player)
                 return@submitTask TaskSchedule.stop()
             }
 
