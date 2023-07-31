@@ -41,6 +41,11 @@ class BlockPreviewHandler(private val timerManager: TimerManager) : EventListene
                 currentPrePlaceBlockMap.remove(player)
             }
         }
+
+        fun resetAllPreviews(player: Player) {
+            resetBlock(player)
+            resetPrePlaceBlock(player)
+        }
     }
     override fun eventType(): Class<PlayerMoveEvent> {
         return PlayerMoveEvent::class.java

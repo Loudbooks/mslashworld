@@ -9,7 +9,6 @@ import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Point
 import net.minestom.server.entity.Player
-import net.minestom.server.instance.block.Block
 import net.minestom.server.item.Material
 import net.minestom.server.network.packet.server.play.ActionBarPacket
 import net.minestom.server.timer.TaskSchedule
@@ -72,6 +71,8 @@ class TimerManager {
     fun startPrePlaceTimer(player: Player, point: Point, material: Material) {
         currentPrePlaceTimers.add(player.uuid)
 
+        BlockPreviewHandler.resetAllPreviews(player)
+
         player.sendMessage(
             Component.textOfChildren(
                 Component.text("Your block will be placed in 5 seconds! Type ")
@@ -87,7 +88,7 @@ class TimerManager {
         var timesRun = 0
         MinecraftServer.getSchedulerManager().submitTask {
             if (!currentPrePlaceTimers.contains(player.uuid)) {
-                BlockPreviewHandler.resetBlock(player)
+                BlockPreviewHandler.resetPrePlaceBlock(player)
                 return@submitTask TaskSchedule.stop()
             }
 

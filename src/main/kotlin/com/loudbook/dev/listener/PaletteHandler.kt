@@ -42,6 +42,7 @@ class PaletteHandler(private val timerManager: TimerManager) : EventListener<Pla
         }
 
         if (timerManager.getPlaceTimer(player)) return EventListener.Result.SUCCESS
+        if (player.getLineOfSight(100).isEmpty()) return EventListener.Result.SUCCESS
 
         BlockPreviewHandler.previewBlock(player, blocks[newIndex].block(), player.getLineOfSight(100).first())
 
