@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.0'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'com.loudbook.dev'
@@ -25,3 +26,15 @@ test {
 kotlin {
     jvmToolchain(19)
 }
+
+application {
+    mainClassName = 'com.loudbook.dev.MSlashWorld'
+}
+
+shadowJar {
+    archiveFileName.set('MSlashWorld.jar')
+    manifest {
+        attributes 'Main-Class': 'com.loudbook.dev.MSlashWorld'
+    }
+}
+
