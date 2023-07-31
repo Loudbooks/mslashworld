@@ -1,9 +1,10 @@
 package com.loudbook.dev
 
+import com.akuleshov7.ktoml.Toml
 import com.loudbook.dev.commands.PlaceCommand
 import com.loudbook.dev.listener.PlaceBlockHandler
 import com.loudbook.dev.listener.BlockPreviewHandler
-import com.loudbook.dev.listener.PaletteHandler
+import kotlinx.serialization.decodeFromString
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
@@ -11,10 +12,10 @@ import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.extras.MojangAuth
 import net.minestom.server.instance.block.Block
-import net.minestom.server.item.ItemStack
-import net.minestom.server.item.Material
 import net.minestom.server.utils.NamespaceID
 import net.minestom.server.world.DimensionType
+import java.io.File
+import java.nio.charset.Charset
 
 class MSlashWorld {
     companion object {
@@ -24,17 +25,19 @@ class MSlashWorld {
 
         @JvmStatic
         fun main(args: Array<String>) {
+            val configString = File("config.toml").readText(charset = Charset.defaultCharset())
+            val config = Toml.decodeFromString<Config>(configString)
             val minecraftServer = MinecraftServer.init()
             val instanceManager = MinecraftServer.getInstanceManager()
 
-            val timerManager = TimerManager()
+            val timerManager = TimerManager(config)
 
             MojangAuth.init()
             MinecraftServer.getDimensionTypeManager().addDimension(fullbright)
 
             val worldInstance = instanceManager.createInstanceContainer(fullbright)
             worldInstance.setGenerator { unit ->
-                    unit.modifier().fillHeight(0, 1, Block.WHITE_CONCRETE)
+                unit.modifier().fillHeight(0, 1, Block.WHITE_CONCRETE)
             }
             worldInstance.worldBorder.setCenter(0f, 0f)
             worldInstance.worldBorder.setDiameter(200.0)
@@ -48,23 +51,14 @@ class MSlashWorld {
                 event.player.respawnPoint = Pos(0.0, 1.0, 0.0)
                 event.player.isAllowFlying = true
                 event.player.isFlying = true
-
-                for (i in 0..8) {
-                    event.player.inventory.setItemStack(i, ItemStack.of(Material.RED_CONCRETE))
-                }
-
+                event.player.gameMode = GameMode.CREATIVE
             }
-                .addListener(BlockPreviewHandler(timerManager))
-                .addListener(PlaceBlockHandler(timerManager))
-                .addListener(PaletteHandler(timerManager))
+                .addListener(BlockPreviewHandler(config, timerManager))
+                .addListener(PlaceBlockHandler(config, timerManager))
 
-            MinecraftServer.getCommandManager().register(PlaceCommand(timerManager))
+            MinecraftServer.getCommandManager().register(PlaceCommand(config, timerManager))
 
-            if (args.isEmpty()) {
-                minecraftServer.start("0.0.0.0", 25565)
-            } else {
-                minecraftServer.start("0.0.0.0", args[0].toInt())
-            }
+            minecraftServer.start("0.0.0.0", config.port)
         }
     }
 }

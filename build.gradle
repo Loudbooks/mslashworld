@@ -2,6 +2,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.0'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.21'
 }
 
 group = 'com.loudbook.dev'
@@ -17,14 +18,14 @@ dependencies {
     implementation 'dev.hollowcube:minestom-ce:65254e919d'
     implementation 'com.github.MadMartian:hydrazine-path-finding:1.8.1'
     implementation 'org.slf4j:slf4j-simple:2.0.7'
+    implementation 'com.akuleshov7:ktoml-core:0.5.0'
 }
-
 test {
     useJUnitPlatform()
 }
 
 kotlin {
-    jvmToolchain(19)
+    jvmToolchain(17)
 }
 
 application {

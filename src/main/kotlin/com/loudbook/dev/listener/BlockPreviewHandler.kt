@@ -1,5 +1,6 @@
 package com.loudbook.dev.listener
 
+import com.loudbook.dev.Config
 import com.loudbook.dev.TimerManager
 import net.minestom.server.coordinate.Point
 import net.minestom.server.entity.Player
@@ -8,7 +9,7 @@ import net.minestom.server.event.player.PlayerMoveEvent
 import net.minestom.server.instance.block.Block
 import net.minestom.server.network.packet.server.play.BlockChangePacket
 
-class BlockPreviewHandler(private val timerManager: TimerManager) : EventListener<PlayerMoveEvent> {
+class BlockPreviewHandler(private val config: Config, private val timerManager: TimerManager) : EventListener<PlayerMoveEvent> {
 
     companion object {
         private val currentBlockMap = mutableMapOf<Player, Point>()
@@ -22,7 +23,8 @@ class BlockPreviewHandler(private val timerManager: TimerManager) : EventListene
 
         fun resetBlock(player: Player) {
             if (currentBlockMap[player] != null) {
-                val blockChangePacket = BlockChangePacket(currentBlockMap[player]!!, player.instance.getBlock(currentBlockMap[player]!!))
+                val blockChangePacket =
+                    BlockChangePacket(currentBlockMap[player]!!, player.instance.getBlock(currentBlockMap[player]!!))
                 player.sendPacket(blockChangePacket)
                 currentBlockMap.remove(player)
             }
@@ -42,6 +44,7 @@ class BlockPreviewHandler(private val timerManager: TimerManager) : EventListene
             }
         }
     }
+
     override fun eventType(): Class<PlayerMoveEvent> {
         return PlayerMoveEvent::class.java
     }
@@ -53,8 +56,11 @@ class BlockPreviewHandler(private val timerManager: TimerManager) : EventListene
             return EventListener.Result.SUCCESS
         }
 
-        val blocksInSight = player.getLineOfSight(100)
-        if (blocksInSight.isEmpty()) return EventListener.Result.SUCCESS
+        val blocksInSight = player.getLineOfSight(config.placeDistance)
+        if (blocksInSight.isEmpty()) {
+            resetBlock(player)
+            return EventListener.Result.SUCCESS
+        }
 
         blocksInSight.first().let { block ->
             if (currentBlockMap[player] == block) {
