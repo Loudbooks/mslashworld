@@ -18,7 +18,6 @@ import kotlin.time.Duration.Companion.seconds
 
 class TimerManager {
     private val timerMap = mutableMapOf<UUID, Int>()
-    private val timerThread = Thread()
 
     fun startTimer(player: Player, ticks: Int) {
         val uuid = player.uuid
