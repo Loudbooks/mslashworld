@@ -25,7 +25,7 @@ class MSlashWorld {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val configString = File("config.toml").readText(charset = Charset.defaultCharset())
+            val configString = File("config.toml").readText()
             val config = Toml.decodeFromString<Config>(configString)
             val minecraftServer = MinecraftServer.init()
             val instanceManager = MinecraftServer.getInstanceManager()
