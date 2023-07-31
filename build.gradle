@@ -15,6 +15,7 @@ dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation 'dev.hollowcube:minestom-ce:65254e919d'
     implementation 'com.github.MadMartian:hydrazine-path-finding:1.8.1'
+    implementation 'org.slf4j:slf4j-simple:2.0.7'
 }
 
 test {
