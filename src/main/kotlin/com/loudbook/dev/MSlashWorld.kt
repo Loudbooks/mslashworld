@@ -3,7 +3,6 @@ package com.loudbook.dev
 import com.loudbook.dev.listener.PlaceBlockHandler
 import com.loudbook.dev.listener.BlockPreviewHandler
 import com.loudbook.dev.listener.PaletteHandler
-import com.loudbook.dev.listener.TickHandler
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
@@ -56,7 +55,6 @@ class MSlashWorld {
             }
                 .addListener(BlockPreviewHandler(timerManager))
                 .addListener(PlaceBlockHandler(timerManager))
-                .addListener(TickHandler(timerManager))
                 .addListener(PaletteHandler(timerManager))
 
             if (args.isEmpty()) {
