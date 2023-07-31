@@ -59,7 +59,11 @@ class MSlashWorld {
                 .addListener(TickHandler(timerManager))
                 .addListener(PaletteHandler(timerManager))
 
-            minecraftServer.start("0.0.0.0", 25565)
+            if (args.isEmpty()) {
+                minecraftServer.start("0.0.0.0", 25565)
+            } else {
+                minecraftServer.start("0.0.0.0", args[0].toInt())
+            }
         }
     }
 }
