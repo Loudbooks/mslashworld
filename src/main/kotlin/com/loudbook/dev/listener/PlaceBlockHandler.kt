@@ -1,13 +1,11 @@
 package com.loudbook.dev.listener
 
 import com.loudbook.dev.managers.TimerManager
-import com.loudbook.dev.managers.config.Config
 import com.loudbook.dev.managers.config.Configurable
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.event.EventListener
 import net.minestom.server.event.player.PlayerUseItemEvent
-import java.util.Optional
 
 class PlaceBlockHandler(private val timerManager: TimerManager) : EventListener<PlayerUseItemEvent>, Configurable() {
     override fun eventType(): Class<PlayerUseItemEvent> {

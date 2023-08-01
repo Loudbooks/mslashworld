@@ -2,12 +2,11 @@ package com.loudbook.dev
 
 import com.loudbook.dev.commands.PlaceCommand
 import com.loudbook.dev.commands.StopCommand
-import com.loudbook.dev.listener.PlaceBlockHandler
 import com.loudbook.dev.listener.BlockPreviewHandler
 import com.loudbook.dev.listener.BreakBlockHandler
-import com.loudbook.dev.managers.config.ConfigManager
+import com.loudbook.dev.listener.PlaceBlockHandler
 import com.loudbook.dev.managers.TimerManager
-import com.loudbook.dev.managers.config.Config
+import com.loudbook.dev.managers.config.ConfigManager
 import com.loudbook.dev.managers.config.Configurable
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
@@ -18,7 +17,6 @@ import net.minestom.server.extras.MojangAuth
 import net.minestom.server.instance.block.Block
 import net.minestom.server.utils.NamespaceID
 import net.minestom.server.world.DimensionType
-import java.util.*
 
 class MSlashWorld : Configurable() {
     companion object {

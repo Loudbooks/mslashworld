@@ -1,8 +1,8 @@
 package com.loudbook.dev.listener
 
+import com.loudbook.dev.managers.TimerManager
 import com.loudbook.dev.managers.config.Config
 import com.loudbook.dev.managers.config.Configurable
-import com.loudbook.dev.managers.TimerManager
 import net.minestom.server.coordinate.Point
 import net.minestom.server.entity.Player
 import net.minestom.server.event.EventListener
@@ -10,7 +10,6 @@ import net.minestom.server.event.player.PlayerMoveEvent
 import net.minestom.server.instance.block.Block
 import net.minestom.server.network.packet.server.play.BlockChangePacket
 import java.util.*
-import kotlin.properties.Delegates
 
 @Suppress("UnstableApiUsage")
 class BlockPreviewHandler(private val timerManager: TimerManager) : EventListener<PlayerMoveEvent>, Configurable() {
