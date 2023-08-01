@@ -1,8 +1,10 @@
 package com.loudbook.dev
 
 import com.loudbook.dev.commands.PlaceCommand
+import com.loudbook.dev.commands.StopCommand
 import com.loudbook.dev.listener.PlaceBlockHandler
 import com.loudbook.dev.listener.BlockPreviewHandler
+import com.loudbook.dev.listener.BreakBlockHandler
 import com.loudbook.dev.managers.config.ConfigManager
 import com.loudbook.dev.managers.TimerManager
 import com.loudbook.dev.managers.config.Config
@@ -16,12 +18,10 @@ import net.minestom.server.extras.MojangAuth
 import net.minestom.server.instance.block.Block
 import net.minestom.server.utils.NamespaceID
 import net.minestom.server.world.DimensionType
+import java.util.*
 
 class MSlashWorld : Configurable() {
     companion object {
-        @Config(key = "port")
-        val port: Int = 25565
-
         private var fullbright: DimensionType = DimensionType.builder(NamespaceID.from("minestom:full_bright"))
             .ambientLight(2.0f)
             .build()
@@ -58,10 +58,16 @@ class MSlashWorld : Configurable() {
             }
                 .addListener(BlockPreviewHandler(timerManager))
                 .addListener(PlaceBlockHandler(timerManager))
+                .addListener(BreakBlockHandler())
 
             MinecraftServer.getCommandManager().register(PlaceCommand(timerManager))
+            MinecraftServer.getCommandManager().register(StopCommand())
 
-            minecraftServer.start("0.0.0.0", port)
+            if (args.isEmpty()) {
+                minecraftServer.start("0.0.0.0", 25565)
+            } else {
+                minecraftServer.start("0.0.0.0", args[0].toInt())
+            }
         }
     }
 }

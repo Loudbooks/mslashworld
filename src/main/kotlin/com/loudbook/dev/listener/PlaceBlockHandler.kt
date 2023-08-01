@@ -7,11 +7,9 @@ import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.event.EventListener
 import net.minestom.server.event.player.PlayerUseItemEvent
+import java.util.Optional
 
 class PlaceBlockHandler(private val timerManager: TimerManager) : EventListener<PlayerUseItemEvent>, Configurable() {
-    @Config(key = "place-distance")
-    private var placeDistance: Int = 100
-
     override fun eventType(): Class<PlayerUseItemEvent> {
         return PlayerUseItemEvent::class.java
     }

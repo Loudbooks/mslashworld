@@ -1,2 +1,4 @@
 place-distance: 5
 place-cooldown: 60
+admins:
+  - 'Notch'

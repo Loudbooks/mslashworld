@@ -17,7 +17,7 @@ dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation 'dev.hollowcube:minestom-ce:65254e919d'
     implementation 'com.github.MadMartian:hydrazine-path-finding:1.8.1'
-    implementation 'log4j:log4j:1.2.17'
+    implementation 'org.slf4j:slf4j-simple:2.0.7'
     implementation 'com.akuleshov7:ktoml-core:0.5.0'
     implementation 'com.google.guava:guava:32.1.2-jre'
     implementation 'org.yaml:snakeyaml:2.0'

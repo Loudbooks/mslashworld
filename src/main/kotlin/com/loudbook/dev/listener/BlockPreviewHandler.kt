@@ -9,11 +9,14 @@ import net.minestom.server.event.EventListener
 import net.minestom.server.event.player.PlayerMoveEvent
 import net.minestom.server.instance.block.Block
 import net.minestom.server.network.packet.server.play.BlockChangePacket
+import java.util.*
+import kotlin.properties.Delegates
 
+@Suppress("UnstableApiUsage")
 class BlockPreviewHandler(private val timerManager: TimerManager) : EventListener<PlayerMoveEvent>, Configurable() {
 
     @Config(key = "place-distance")
-    private var placeDistance: Int = 100
+    lateinit var placeDistance: Optional<Int>
 
     companion object {
         private val currentBlockMap = mutableMapOf<Player, Point>()
@@ -65,7 +68,7 @@ class BlockPreviewHandler(private val timerManager: TimerManager) : EventListene
             return EventListener.Result.SUCCESS
         }
 
-        val blocksInSight = player.getLineOfSight(placeDistance)
+        val blocksInSight = player.getLineOfSight(placeDistance.get())
         if (blocksInSight.isEmpty()) {
             resetBlock(player)
             return EventListener.Result.SUCCESS
