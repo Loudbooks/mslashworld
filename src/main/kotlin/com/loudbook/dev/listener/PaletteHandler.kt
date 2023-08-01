@@ -1,6 +1,6 @@
 package com.loudbook.dev.listener
 
-import com.loudbook.dev.TimerManager
+import com.loudbook.dev.managers.TimerManager
 import net.minestom.server.event.EventListener
 import net.minestom.server.event.player.PlayerHandAnimationEvent
 import net.minestom.server.item.ItemStack

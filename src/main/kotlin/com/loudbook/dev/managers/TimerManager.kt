@@ -1,4 +1,4 @@
-package com.loudbook.dev
+package com.loudbook.dev.managers
 
 import com.loudbook.dev.listener.BlockPreviewHandler
 import net.kyori.adventure.key.Key
@@ -15,13 +15,13 @@ import net.minestom.server.timer.TaskSchedule
 import java.util.*
 
 @Suppress("UnstableApiUsage")
-class TimerManager(private val config: Config) {
+class TimerManager() {
     private val placeTimerMap = mutableMapOf<UUID, Int>()
     private val currentPrePlaceTimers = mutableListOf<UUID>()
 
     fun startPlaceTimer(player: Player) {
         val uuid = player.uuid
-        placeTimerMap[uuid] = this.config.placeCooldown
+        placeTimerMap[uuid] = 10
 
         MinecraftServer.getSchedulerManager().submitTask {
             if (placeTimerMap[uuid]!! > 0) {

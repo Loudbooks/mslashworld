@@ -1,7 +1,8 @@
 package com.loudbook.dev.listener
 
-import com.loudbook.dev.Config
-import com.loudbook.dev.TimerManager
+import com.loudbook.dev.managers.config.Config
+import com.loudbook.dev.managers.config.Configurable
+import com.loudbook.dev.managers.TimerManager
 import net.minestom.server.coordinate.Point
 import net.minestom.server.entity.Player
 import net.minestom.server.event.EventListener
@@ -9,7 +10,10 @@ import net.minestom.server.event.player.PlayerMoveEvent
 import net.minestom.server.instance.block.Block
 import net.minestom.server.network.packet.server.play.BlockChangePacket
 
-class BlockPreviewHandler(private val config: Config, private val timerManager: TimerManager) : EventListener<PlayerMoveEvent> {
+class BlockPreviewHandler(private val timerManager: TimerManager) : EventListener<PlayerMoveEvent>, Configurable() {
+
+    @Config(key = "place-distance")
+    private var placeDistance: Int = 100
 
     companion object {
         private val currentBlockMap = mutableMapOf<Player, Point>()
@@ -61,7 +65,7 @@ class BlockPreviewHandler(private val config: Config, private val timerManager: 
             return EventListener.Result.SUCCESS
         }
 
-        val blocksInSight = player.getLineOfSight(config.placeDistance)
+        val blocksInSight = player.getLineOfSight(placeDistance)
         if (blocksInSight.isEmpty()) {
             resetBlock(player)
             return EventListener.Result.SUCCESS
@@ -72,9 +76,9 @@ class BlockPreviewHandler(private val config: Config, private val timerManager: 
                 return EventListener.Result.SUCCESS
             }
 
-            player.itemInMainHand.material().block() ?: return EventListener.Result.SUCCESS
+            val blockInHand = player.itemInMainHand.material().block() ?: return EventListener.Result.SUCCESS
 
-            previewBlock(player, player.itemInMainHand.material().block()!!, block)
+            previewBlock(player, blockInHand, block)
         }
         return EventListener.Result.SUCCESS
     }

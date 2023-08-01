@@ -3,7 +3,7 @@ package com.loudbook.dev.world
 import net.minestom.server.item.Material
 
 class World(private val world: Array<Material>) {
-    public fun serialize(): ByteArray {
+    fun serialize(): ByteArray {
         val ser: ByteArray = ByteArray(world.size)
         for (block in world.withIndex()) {
             val blockByte = materialToByte(block.value)
@@ -12,7 +12,7 @@ class World(private val world: Array<Material>) {
         return ser
     }
 
-    public fun deserialize(stored: ByteArray): ArrayList<Material> {
+    fun deserialize(stored: ByteArray): ArrayList<Material> {
         val de: ArrayList<Material> = ArrayList(stored.size)
         for (block in stored.withIndex()) {
             val blockByte = byteToMaterial(block.value)

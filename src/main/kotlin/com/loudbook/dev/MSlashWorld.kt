@@ -1,10 +1,12 @@
 package com.loudbook.dev
 
-import com.akuleshov7.ktoml.Toml
 import com.loudbook.dev.commands.PlaceCommand
 import com.loudbook.dev.listener.PlaceBlockHandler
 import com.loudbook.dev.listener.BlockPreviewHandler
-import kotlinx.serialization.decodeFromString
+import com.loudbook.dev.managers.config.ConfigManager
+import com.loudbook.dev.managers.TimerManager
+import com.loudbook.dev.managers.config.Config
+import com.loudbook.dev.managers.config.Configurable
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
@@ -14,23 +16,24 @@ import net.minestom.server.extras.MojangAuth
 import net.minestom.server.instance.block.Block
 import net.minestom.server.utils.NamespaceID
 import net.minestom.server.world.DimensionType
-import java.io.File
-import java.nio.charset.Charset
 
-class MSlashWorld {
+class MSlashWorld : Configurable() {
     companion object {
+        @Config(key = "port")
+        val port: Int = 25565
+
         private var fullbright: DimensionType = DimensionType.builder(NamespaceID.from("minestom:full_bright"))
             .ambientLight(2.0f)
             .build()
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val configString = File("config.toml").readText()
-            val config = Toml.decodeFromString<Config>(configString)
+            ConfigManager.loadConfig()
+
             val minecraftServer = MinecraftServer.init()
             val instanceManager = MinecraftServer.getInstanceManager()
 
-            val timerManager = TimerManager(config)
+            val timerManager = TimerManager()
 
             MojangAuth.init()
             MinecraftServer.getDimensionTypeManager().addDimension(fullbright)
@@ -53,12 +56,12 @@ class MSlashWorld {
                 event.player.isFlying = true
                 event.player.gameMode = GameMode.CREATIVE
             }
-                .addListener(BlockPreviewHandler(config, timerManager))
-                .addListener(PlaceBlockHandler(config, timerManager))
+                .addListener(BlockPreviewHandler(timerManager))
+                .addListener(PlaceBlockHandler(timerManager))
 
-            MinecraftServer.getCommandManager().register(PlaceCommand(config, timerManager))
+            MinecraftServer.getCommandManager().register(PlaceCommand(timerManager))
 
-            minecraftServer.start("0.0.0.0", config.port)
+            minecraftServer.start("0.0.0.0", port)
         }
     }
 }
