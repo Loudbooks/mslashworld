@@ -2,7 +2,9 @@ package com.loudbook.dev.managers.config
 
 import net.minestom.server.MinecraftServer
 import org.yaml.snakeyaml.Yaml
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileReader
 import java.nio.file.Files
 
 
@@ -20,10 +22,6 @@ class ConfigManager {
             }
 
             values = yaml.load(file.inputStream())
-
-            values["place-distance"] = 5
         }
     }
-
-
 }

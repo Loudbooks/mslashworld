@@ -1,13 +1,20 @@
 package com.loudbook.dev.listener
 
 import com.loudbook.dev.managers.TimerManager
+import com.loudbook.dev.managers.config.Config
 import com.loudbook.dev.managers.config.Configurable
+import com.loudbook.dev.world.World
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.event.EventListener
 import net.minestom.server.event.player.PlayerUseItemEvent
+import java.util.*
 
-class PlaceBlockHandler(private val timerManager: TimerManager) : EventListener<PlayerUseItemEvent>, Configurable() {
+class PlaceBlockHandler(private val timerManager: TimerManager, private val world: World) : EventListener<PlayerUseItemEvent>, Configurable() {
+    @Config(key = "place-distance")
+    lateinit var placeDistance: Optional<Int>
+
     override fun eventType(): Class<PlayerUseItemEvent> {
         return PlayerUseItemEvent::class.java
     }
@@ -17,7 +24,7 @@ class PlaceBlockHandler(private val timerManager: TimerManager) : EventListener<
 
         if (timerManager.getPlaceTimer(player)) return EventListener.Result.SUCCESS
 
-        val blocksInSight = player.getLineOfSight(100)
+        val blocksInSight = player.getLineOfSight(placeDistance.get())
         blocksInSight ?: return EventListener.Result.SUCCESS
         if (blocksInSight.isEmpty()) return EventListener.Result.SUCCESS
 
@@ -26,6 +33,7 @@ class PlaceBlockHandler(private val timerManager: TimerManager) : EventListener<
         player.playSound(Sound.sound(Key.key("block.wool.place"), Sound.Source.PLAYER, 10f, 1f))
 
         timerManager.startPlaceTimer(player)
+        world.blocks[Pos(blockPosition)] = player.itemInMainHand.material()
 
         return EventListener.Result.SUCCESS
     }

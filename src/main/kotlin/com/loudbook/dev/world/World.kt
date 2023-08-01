@@ -1,24 +1,84 @@
 package com.loudbook.dev.world
 
+import com.loudbook.dev.MSlashWorld
+import net.minestom.server.MinecraftServer
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.instance.InstanceContainer
+import net.minestom.server.instance.block.Block
 import net.minestom.server.item.Material
+import java.io.File
+import java.io.FileOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import kotlin.time.measureTime
 
-class World(private val world: Array<Material>) {
-    fun serialize(): ByteArray {
-        val ser: ByteArray = ByteArray(world.size)
-        for (block in world.withIndex()) {
-            val blockByte = materialToByte(block.value)
-            ser[block.index] = blockByte
+class World {
+    private val instanceManager = MinecraftServer.getInstanceManager()
+    var instance: InstanceContainer = instanceManager.createInstanceContainer(MSlashWorld.fullbright)
+    var blocks = mutableMapOf<Pos, Material>()
+
+    init {
+        instance.setGenerator { unit ->
+            unit.modifier().fillHeight(0, 1, Block.WHITE_CONCRETE)
         }
-        return ser
+        instance.worldBorder.setCenter(0f, 0f)
+        instance.worldBorder.setDiameter(200.0)
     }
 
-    fun deserialize(stored: ByteArray): ArrayList<Material> {
-        val de: ArrayList<Material> = ArrayList(stored.size)
-        for (block in stored.withIndex()) {
-            val blockByte = byteToMaterial(block.value)
-            de[block.index] = blockByte
+    fun load() {
+        loadFromFile()
+    }
+
+    private fun serialize(): MutableMap<Triple<Double, Double, Double>, Byte> {
+        val blockMap = mutableMapOf<Triple<Double, Double, Double>, Byte>()
+        for (pos in blocks.keys.withIndex()) {
+            blockMap[Triple(pos.value.x, pos.value.y, pos.value.z)] = materialToByte(blocks[pos.value]!!)
         }
-        return de
+        return blockMap
+    }
+
+    private fun deserialize(file: File): MutableMap<Pos, Material> {
+        val inputStream = ObjectInputStream(file.inputStream())
+        val stored = inputStream.readObject() as MutableMap<Triple<Double, Double, Double>, Byte>
+
+        val blocks = mutableMapOf<Pos, Material>()
+        for (pos in stored.keys.withIndex()) {
+            blocks[Pos(pos.value.first, pos.value.second, pos.value.third)] = byteToMaterial(stored[pos.value]!!)
+        }
+
+        return blocks
+    }
+
+    fun saveToFile() {
+        val file = File("./world.dat")
+
+        if (file.exists()) {
+            file.delete()
+        }
+
+        val objectOutputStream = ObjectOutputStream(FileOutputStream(file))
+        objectOutputStream.writeObject(serialize())
+        file.createNewFile()
+    }
+
+    private fun loadFromFile() {
+        val file = File("./world.dat")
+
+        if (!file.exists()) {
+            return
+        }
+
+        this.blocks = deserialize(file)
+
+        MinecraftServer.LOGGER.info("Loaded valid world file! Placing...")
+
+        val timeTaken = measureTime {
+            for (block in this.blocks) {
+                instance.setBlock(block.key, block.value.block())
+            }
+        }
+
+        MinecraftServer.LOGGER.info("Placed ${this.blocks.size} blocks in ${timeTaken.inWholeMilliseconds}ms!")
     }
 
     private fun materialToByte(block: Material): Byte {
@@ -68,5 +128,4 @@ class World(private val world: Array<Material>) {
             }
         }
     }
-
 }

@@ -11,8 +11,7 @@ open class Configurable {
     private fun setConfigVariables() {
         val clazz = this.javaClass
         for (field in clazz.fields) {
-            if (!field.isAnnotationPresent(Config::class.java)) return
-
+            if (!field.isAnnotationPresent(Config::class.java)) continue
             val key = field.getAnnotation(Config::class.java).key
             val value = ConfigManager.values[key] ?: {
                 MinecraftServer.LOGGER.error("Config value $key not found! Using default value of ${field.get(this)}")

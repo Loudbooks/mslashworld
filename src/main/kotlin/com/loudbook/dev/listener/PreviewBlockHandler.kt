@@ -11,9 +11,7 @@ import net.minestom.server.instance.block.Block
 import net.minestom.server.network.packet.server.play.BlockChangePacket
 import java.util.*
 
-@Suppress("UnstableApiUsage")
-class BlockPreviewHandler(private val timerManager: TimerManager) : EventListener<PlayerMoveEvent>, Configurable() {
-
+class PreviewBlockHandler(private val timerManager: TimerManager) : EventListener<PlayerMoveEvent>, Configurable() {
     @Config(key = "place-distance")
     lateinit var placeDistance: Optional<Int>
 
