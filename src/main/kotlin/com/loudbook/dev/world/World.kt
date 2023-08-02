@@ -49,16 +49,20 @@ class World {
         return blocks
     }
 
-    fun saveToFile() {
+    fun save() {
         val file = File("./world.dat")
 
         if (file.exists()) {
             file.delete()
         }
 
-        val objectOutputStream = ObjectOutputStream(FileOutputStream(file))
-        objectOutputStream.writeObject(serialize())
-        file.createNewFile()
+        val timeTaken = measureTime {
+            val objectOutputStream = ObjectOutputStream(FileOutputStream(file))
+            objectOutputStream.writeObject(serialize())
+            file.createNewFile()
+        }
+
+        MinecraftServer.LOGGER.info("Saved ${this.blocks.size} blocks in ${timeTaken.inWholeMilliseconds}ms!")
     }
 
     private fun loadFromFile() {

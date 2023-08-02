@@ -4,6 +4,7 @@ import com.loudbook.dev.commands.PlaceCommand
 import com.loudbook.dev.commands.StopCommand
 import com.loudbook.dev.listener.PreviewBlockHandler
 import com.loudbook.dev.listener.BreakBlockHandler
+import com.loudbook.dev.listener.ConsoleHandler
 import com.loudbook.dev.listener.PlaceBlockHandler
 import com.loudbook.dev.managers.TimerManager
 import com.loudbook.dev.managers.config.ConfigManager
@@ -30,7 +31,10 @@ class MSlashWorld : Configurable() {
         fun main(args: Array<String>) {
             ConfigManager.loadConfig()
 
+            ConsoleHandler()
+
             val minecraftServer = MinecraftServer.init()
+            MinecraftServer.setBrandName("m/world")
 
             MojangAuth.init()
             MinecraftServer.getDimensionTypeManager().addDimension(fullbright)
@@ -64,6 +68,10 @@ class MSlashWorld : Configurable() {
             } else {
                 minecraftServer.start("0.0.0.0", args[0].toInt())
             }
+
+            Runtime.getRuntime().addShutdownHook(Thread {
+                world.save()
+            })
         }
     }
 }
