@@ -8,18 +8,29 @@ import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.event.EventListener
+import net.minestom.server.event.player.PlayerBlockPlaceEvent
 import net.minestom.server.event.player.PlayerUseItemEvent
+import net.minestom.server.event.trait.PlayerEvent
 import java.util.*
 
-class PlaceBlockHandler(private val timerManager: TimerManager, private val world: World) : EventListener<PlayerUseItemEvent>, Configurable() {
+class PlaceBlockHandler(private val timerManager: TimerManager, private val world: World) : EventListener<PlayerEvent>, Configurable() {
     @Config(key = "place-distance")
     lateinit var placeDistance: Optional<Int>
 
-    override fun eventType(): Class<PlayerUseItemEvent> {
-        return PlayerUseItemEvent::class.java
+    override fun eventType(): Class<PlayerEvent> {
+        return PlayerEvent::class.java
     }
 
-    override fun run(event: PlayerUseItemEvent): EventListener.Result {
+    override fun run(event: PlayerEvent): EventListener.Result {
+        println("susler")
+        if (event !is PlayerUseItemEvent && event !is PlayerBlockPlaceEvent) return EventListener.Result.SUCCESS
+
+        println("sussiest")
+        if (event is PlayerBlockPlaceEvent) {
+            event.isCancelled = true
+            println("SUS")
+        }
+
         val player = event.player
 
         if (timerManager.getPlaceTimer(player)) return EventListener.Result.SUCCESS
