@@ -1,6 +1,6 @@
 package com.loudbook.dev.listener
 
-import com.loudbook.dev.TimerManager
+import com.loudbook.dev.managers.TimerManager
 import net.minestom.server.event.EventListener
 import net.minestom.server.event.player.PlayerHandAnimationEvent
 import net.minestom.server.item.ItemStack
@@ -44,7 +44,7 @@ class PaletteHandler(private val timerManager: TimerManager) : EventListener<Pla
         if (timerManager.getPlaceTimer(player)) return EventListener.Result.SUCCESS
         if (player.getLineOfSight(100).isEmpty()) return EventListener.Result.SUCCESS
 
-        BlockPreviewHandler.previewBlock(player, blocks[newIndex].block(), player.getLineOfSight(100).first())
+        PreviewBlockHandler.previewBlock(player, blocks[newIndex].block(), player.getLineOfSight(100).first())
 
         return EventListener.Result.SUCCESS
     }

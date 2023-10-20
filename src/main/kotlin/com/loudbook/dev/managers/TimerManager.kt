@@ -1,6 +1,7 @@
-package com.loudbook.dev
+package com.loudbook.dev.managers
 
-import com.loudbook.dev.listener.BlockPreviewHandler
+import com.loudbook.dev.listener.PreviewBlockHandler
+import com.loudbook.dev.world.World
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
@@ -8,6 +9,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Point
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.Player
 import net.minestom.server.item.Material
 import net.minestom.server.network.packet.server.play.ActionBarPacket
@@ -15,13 +17,13 @@ import net.minestom.server.timer.TaskSchedule
 import java.util.*
 
 @Suppress("UnstableApiUsage")
-class TimerManager {
+class TimerManager(private val world: World) {
     private val placeTimerMap = mutableMapOf<UUID, Int>()
     private val currentPrePlaceTimers = mutableListOf<UUID>()
 
-    fun startPlaceTimer(player: Player, seconds: Int) {
+    fun startPlaceTimer(player: Player) {
         val uuid = player.uuid
-        placeTimerMap[uuid] = seconds
+        placeTimerMap[uuid] = 10
 
         MinecraftServer.getSchedulerManager().submitTask {
             if (placeTimerMap[uuid]!! > 0) {
@@ -71,7 +73,7 @@ class TimerManager {
     fun startPrePlaceTimer(player: Player, point: Point, material: Material) {
         currentPrePlaceTimers.add(player.uuid)
 
-        BlockPreviewHandler.resetAllPreviews(player)
+        PreviewBlockHandler.resetAllPreviews(player)
 
         player.sendMessage(
             Component.textOfChildren(
@@ -88,21 +90,22 @@ class TimerManager {
         var timesRun = 0
         MinecraftServer.getSchedulerManager().submitTask {
             if (!currentPrePlaceTimers.contains(player.uuid)) {
-                BlockPreviewHandler.resetPrePlaceBlock(player)
+                PreviewBlockHandler.resetPrePlaceBlock(player)
                 return@submitTask TaskSchedule.stop()
             }
 
             if (timesRun == 20) {
                 player.instance.setBlock(point, material.block())
-                startPlaceTimer(player, 10)
+                startPlaceTimer(player)
                 currentPrePlaceTimers.remove(player.uuid)
+                world.blocks[Pos(point)] = material
                 return@submitTask TaskSchedule.stop()
             }
 
             if (isPreviewed) {
-                BlockPreviewHandler.resetPrePlaceBlock(player)
+                PreviewBlockHandler.resetPrePlaceBlock(player)
             } else {
-                BlockPreviewHandler.previewPrePlaceBlock(player, material.block()!!, point)
+                PreviewBlockHandler.previewPrePlaceBlock(player, material.block()!!, point)
             }
 
             isPreviewed = !isPreviewed
